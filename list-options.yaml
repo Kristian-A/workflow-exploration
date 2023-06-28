@@ -1,0 +1,14 @@
+name: Look at different options
+on:
+  workflow_dispatch:
+    inputs:
+      environment_option:
+        type: choice
+        description: Select an option
+        options:
+          - option1
+          - option2
+          - option3
+          - option4
+          - all
+        default: all
