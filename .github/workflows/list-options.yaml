@@ -44,16 +44,14 @@ jobs:
     name: See which option was selected
     runs-on: ubuntu-latest
     needs: set-matrix
-    strategy:
-      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+    # strategy:
+    #   matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Output Matrix
         run: |
           echo "Matrix Combinations:"
-          cat <<EOF | jq
-          ${{ fromJson(needs.set-matrix.outputs.matrix) }}
-          EOF
+          echo "${{ needs.set-matrix.outputs.matrix }}}}"
       - name: Show which option was selected
         run: echo "The option selected was ${{ github.event.inputs.environment_option }} in ${{ github.event.inputs.environment_type }}"
