@@ -3,14 +3,8 @@ on:
   workflow_dispatch:
     inputs:
       environment_option:
-        type: choice
         description: Select an option
-        options:
-          - option1
-          - option2
-          - option3
-          - option4
-          - all
+        required: true
         default: all
 
 jobs:
@@ -18,5 +12,23 @@ jobs:
     name: See which option was selected
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Read options from config file
+        id: options
+        run: |
+          echo "::set-output name=options::$(jq -r '.options | join(",")' options.json)"
+        shell: bash
+      - name: Validate input against config
+        run: |
+          IFS=',' read -ra valid_options <<< "${{ steps.options.outputs.options }}"
+          for i in "${valid_options[@]}"; do
+            if [[ "${{ github.event.inputs.environment_option }}" == "$i" ]]; then
+              echo "Valid option selected"
+              exit 0
+            fi
+          done
+          echo "Invalid option selected"
+          exit 1
       - name: Show which option was selected
         run: echo "The option selected was ${{ github.event.inputs.environment_option }}"
