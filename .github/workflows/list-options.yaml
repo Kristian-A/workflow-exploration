@@ -12,3 +12,11 @@ on:
           - option4
           - all
         default: all
+
+jobs:
+  run-code:
+    name: See which option was selected
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show which option was selected
+        run: echo "The option selected was ${{ github.event.inputs.environment_option }}"
