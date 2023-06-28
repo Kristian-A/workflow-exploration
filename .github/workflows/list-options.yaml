@@ -52,6 +52,6 @@ jobs:
       - name: Output Matrix
         run: |
           echo "Matrix Combinations:"
-          echo "${{ needs.set-matrix.outputs.matrix }}}}"
+          echo "${{ fromJson(needs.set-matrix.outputs.matrix) }}}}"
       - name: Show which option was selected
         run: echo "The option selected was ${{ github.event.inputs.environment_option }} in ${{ github.event.inputs.environment_type }}"

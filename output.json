@@ -1,0 +1,35 @@
+{include: [
+        {environment-type: staging, environment-name: option1
+        },
+        {environment-type: staging, environment-name: option2
+        },
+        {environment-type: staging, environment-name: option3
+        },
+        {environment-type: staging, environment-name: option4
+        },
+        {environment-type: staging, environment-name: all
+        },
+        {environment-type: production, environment-name: option1
+        },
+        {environment-type: production, environment-name: option2
+        },
+        {environment-type: production, environment-name: option3
+        },
+        {environment-type: production, environment-name: option4
+        },
+        {environment-type: production, environment-name: all
+        },
+        {environment-type: staging and production, environment-name: option1
+        },
+        {environment-type: staging and production, environment-name: option2
+        },
+        {environment-type: staging and production, environment-name: option3
+        },
+        {environment-type: staging and production, environment-name: option4
+        },
+        {environment-type: staging and production, environment-name: all
+        }
+    ]
+}
+}
+}
