@@ -17,11 +17,12 @@ jobs:
       - name: Read options from config file
         id: options
         run: |
-          echo "::set-output name=options::$(jq -r '.options | join(",")' options.json)"
+          OPTIONS=$(jq -r '.options | join(",")' options.json)
+          echo "OPTIONS=$OPTIONS" >> $GITHUB_ENV
         shell: bash
       - name: Validate input against config
         run: |
-          IFS=',' read -ra valid_options <<< "${{ steps.options.outputs.options }}"
+          IFS=',' read -ra valid_options <<< "$OPTIONS"
           for i in "${valid_options[@]}"; do
             if [[ "${{ github.event.inputs.environment_option }}" == "$i" ]]; then
               echo "Valid option selected"
