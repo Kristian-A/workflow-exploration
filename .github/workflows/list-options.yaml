@@ -17,28 +17,47 @@ on:
         default: staging and production
 
 jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: |
+          environment_options=$(jq -r '.environment[]' config.json)
+          all_types=("staging" "production" "staging and production")
+          excluded=$(jq -c '.excluded_environments[]' config.json)
+
+          matrix="{\"include\": ["
+          for type in "${all_types[@]}"; do
+            for option in $environment_options; do
+              if ! echo "$excluded" | grep -q "{\"environment-type\": \"$type\", \"environment-name\": \"$option\"}"; then
+                matrix+="{\"environment-type\": \"$type\", \"environment-name\": \"$option\"},"
+              fi
+            done
+          done
+          matrix="${matrix%,}]}" # Remove trailing comma and close bracket
+
+          echo "$matrix" > matrix.json
+      - name: Set output
+        id: set-matrix
+        run: echo "::set-output name=matrix::$(cat matrix.json)"
+
   run-code:
     name: See which option was selected
     runs-on: ubuntu-latest
+    needs: set-matrix
+    strategy:
+      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Read options from config file
-        id: options
+      - name: Output Matrix
         run: |
-          OPTIONS=$(jq -r '.environment | join(",")' config.json)
-          echo "OPTIONS=$OPTIONS" >> $GITHUB_ENV
-        shell: bash
-      - name: Validate input against config
-        run: |
-          IFS=',' read -ra valid_options <<< "$OPTIONS"
-          for i in "${valid_options[@]}"; do
-            if [[ "${{ github.event.inputs.environment_option }}" == "$i" ]]; then
-              echo "Valid option selected"
-              exit 0
-            fi
-          done
-          echo "Invalid option selected"
-          exit 1
+          echo "Matrix Combinations:"
+          cat <<EOF | jq
+          ${{fromJson(needs.set-matrix.outputs.matrix)}}
+          EOF
       - name: Show which option was selected
-        run: echo "The option selected was ${{ github.event.inputs.environment_option }} in ${{ github.event.inputs.environment_type }}"
+        run: echo "The option selected was ${{ matrix.environment-name }} in ${{ matrix.environment-type }}"
