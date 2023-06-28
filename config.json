@@ -1,9 +1,19 @@
 {
-    "options": [
+    "environment": [
         "option1",
         "option2",
         "option3",
         "option4",
         "all"
+    ],
+    "excluded_environments": [
+        {
+            "environment-type": "staging",
+            "environment-name": "option1"
+        },
+        {
+            "environment-type": "staging",
+            "environment-name": "option2"
+        }
     ]
 }

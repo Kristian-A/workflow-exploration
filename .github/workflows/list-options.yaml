@@ -6,6 +6,15 @@ on:
         description: Select an option
         required: true
         default: all
+      environment_type:
+        description: Select the environment name to run the actions on
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+          - staging and production
+        default: staging and production
 
 jobs:
   run-code:
@@ -32,4 +41,4 @@ jobs:
           echo "Invalid option selected"
           exit 1
       - name: Show which option was selected
-        run: echo "The option selected was ${{ github.event.inputs.environment_option }}"
+        run: echo "The option selected was ${{ github.event.inputs.environment_option }} in ${{ github.event.inputs.environment_type }}"
