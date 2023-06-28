@@ -38,11 +38,7 @@ jobs:
             done
           done
           matrix="${matrix%,}]}" # Remove trailing comma and close bracket
-
-          echo "$matrix" > matrix.json
-      - name: Set output
-        id: set-matrix
-        run: echo "::set-output name=matrix::$(cat matrix.json)"
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
   run-code:
     name: See which option was selected
@@ -57,7 +53,7 @@ jobs:
         run: |
           echo "Matrix Combinations:"
           cat <<EOF | jq
-          ${{fromJson(needs.set-matrix.outputs.matrix)}}
+          ${{ fromJson(needs.set-matrix.outputs.matrix) }}
           EOF
       - name: Show which option was selected
-        run: echo "The option selected was ${{ matrix.environment-name }} in ${{ matrix.environment-type }}"
+        run: echo "The option selected was ${{ github.event.inputs.environment_option }} in ${{ github.event.inputs.environment_type }}"
